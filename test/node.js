@@ -43,6 +43,21 @@ wows.describe('XML Node Parse').addBatch({
     	console.assert ( root.firstChild.nextSibling.nextSibling.nextSibling.nodeValue ==' comment ');
     	console.assert ( root.firstChild.nextSibling.nextSibling.nextSibling.nextSibling.nodeValue =='end');
     },
+    'text node with no character entities': function() {
+    	var dom = new DOMParser().parseFromString('<xml>test value</xml>');
+    	var root = dom.documentElement;
+    	console.assert ( root.firstChild.textContent =='test value');
+    },
+    'text node with two one-byte character entities': function () {
+    	var dom = new DOMParser().parseFromString('<xml>&lt;inner&gt;&lt;/inner&gt;</xml>');
+    	var root = dom.documentElement;
+    	console.assert ( root.firstChild.textContent =='<inner><inner>');
+    },
+    'text node with a two-byte character entity': function () {
+    	var dom = new DOMParser().parseFromString('<xml>f&#xC3;&#xBC;n</xml>');
+    	var root = dom.documentElement;
+    	console.assert ( root.firstChild.textContent =='fün');
+    },
     'append node': function () {
     	var dom = new DOMParser().parseFromString('<xml/>');
     	var child = dom.createElement("child");
