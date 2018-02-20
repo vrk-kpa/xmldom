@@ -58,12 +58,10 @@ function parse(source,defaultNSMapCopy,entityMap,domBuilder,errorHandler){
 		}
 	}
 	function appendText(end){//has some bugs
-		// support for xml entities encoded using &#xAA;&#xBB; where AA+BB are hex
-		var xt = source.substring(start,end).replace(/&#x(\w+);&#x(\w+);/g, function(a, b, c) { return new Buffer(b + c, 'hex').toString() }); 
-		xt = xt.replace(/&#?\w+;/g,entityReplacer);
+		var xt = source.substring(start,end).replace(/&#?\w+;/g,entityReplacer);
 		locator&&position(start);
 		domBuilder.characters(xt,0,end-start);
-		start = end
+		start = end;
 	}
 	function position(start,m){
 		while(start>=endPos && (m = linePattern.exec(source))){
