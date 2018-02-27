@@ -47,17 +47,46 @@ wows.describe('XML Node Parse').addBatch({
     	var dom = new DOMParser().parseFromString('<xml>test value</xml>');
     	var root = dom.documentElement;
     	console.assert ( root.firstChild.textContent =='test value');
-    },
+	},
+	/** 
+	 * These tests were added to confirm a change that removed logic which was
+	 * inappropriately converting pairs of Unicode code point character entities
+	 * into a single value.
+	 * 
+	 * This appears to be against the XML 1.0 specification "Section 4.1:
+	 * Character and Entity References":
+	 * 
+	 * > If the character reference begins with " &#x ", the digits and letters
+	 * > up to the terminating ; provide a hexadecimal representation of the
+	 * > character's code point in ISO/IEC 10646. If it begins just with " &# ",
+	 * > the digits up to the terminating ; provide a decimal representation of
+	 * > the character's code point.
+	 * 
+	 * {@link https://www.w3.org/TR/xml/#sec-references}
+	 */
     'text node with two one-byte character entities': function () {
     	var dom = new DOMParser().parseFromString('<xml>&lt;inner&gt;&lt;/inner&gt;</xml>');
     	var root = dom.documentElement;
-    	console.assert ( root.firstChild.textContent =='<inner><inner>');
-    },
+    	console.assert ( root.firstChild.textContent =='<inner></inner>');
+	},
     'text node with a two-byte character entity': function () {
     	var dom = new DOMParser().parseFromString('<xml>f&#xC3;&#xBC;n</xml>');
     	var root = dom.documentElement;
+    	console.assert ( root.firstChild.textContent =='fÃ¼n');
+	},
+	'text node with a single two-byte character entity': function () {
+    	var dom = new DOMParser().parseFromString('<xml>f&#x00FC;n</xml>');
+    	var root = dom.documentElement;
     	console.assert ( root.firstChild.textContent =='fün');
-    },
+	},
+	'text node with two one-byte Unicode character entities': function () {
+		var dom = new DOMParser().parseFromString('<xml>kchen&#x4E03;&#x5473;@shichimitogarashi.org</xml>');
+    	var root = dom.documentElement;
+    	console.assert ( root.firstChild.textContent =='kchen七味@shichimitogarashi.org');
+	},
+	/**
+	 * End of unicode tests
+	 */
     'append node': function () {
     	var dom = new DOMParser().parseFromString('<xml/>');
     	var child = dom.createElement("child");
