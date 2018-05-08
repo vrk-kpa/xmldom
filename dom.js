@@ -9,7 +9,7 @@ function copy(src,dest){
 	for(var p in src){
 		dest[p] = src[p];
 	}
-}
+} 
 /**
 ^\w+\.prototype\.([_\w]+)\s*=\s*((?:.*\{\s*?[\r\n][\s\S]*?^})|\S.*?(?=[;\r\n]));?
 ^\w+\.prototype\.([_\w]+)\s*=\s*(\S.*?(?=[;\r\n]));?
